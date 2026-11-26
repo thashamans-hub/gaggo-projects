@@ -422,13 +422,19 @@
     upload: function (file, onProgress, signal) {
       var fd = new FormData();
       fd.append('file', file, file.name || 'fil');
-      function send(url) {
-        return xhrSend({ method: 'POST', url: url, body: fd, onProgress: onProgress, signal: signal });
+      var onNetlify = typeof location !== 'undefined' && /netlify\.app$/i.test(location.hostname || '');
+      var urls = [];
+      if (onNetlify) urls.push('api/tmpfiles');
+      urls.push('https://tmpfiles.org/api/v1/upload', 'https://tmpfiles.org/api/v1/upload');
+      function attempt(i) {
+        if (i >= urls.length) return Promise.reject(new Error('TmpFiles accepterade inte uppladdningen'));
+        return xhrSend({ method: 'POST', url: urls[i], body: fd, onProgress: onProgress, signal: signal })
+          .catch(function (e) {
+            if (signal && signal.aborted) throw e;
+            return attempt(i + 1);
+          });
       }
-      return send('api/tmpfiles').catch(function (e) {
-        if (signal && signal.aborted) throw e;
-        return send('https://tmpfiles.org/api/v1/upload');
-      }).then(function (res) {
+      return attempt(0).then(function (res) {
         var shareUrl = res && res.data && res.data.url;
         if (!shareUrl) throw new Error('TmpFiles returnerade ingen länk');
         var direct = String(shareUrl).replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');

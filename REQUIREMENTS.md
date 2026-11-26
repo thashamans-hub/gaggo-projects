@@ -34,6 +34,9 @@
 - Supabase JS via jsDelivr CDN – behövs bara för Supabase-läget.
 - qrserver.com för QR-koder – valfritt, länken fungerar även utan QR.
 
+## Fixar i 15.3
+- GitHub Pages: proxyn används bara på Netlify; TmpFiles-upload retry:ar automatiskt (inga 405-fel i konsolen).
+
 ## Fixar i 15.2
 - Inga externa typsnitt – systemfonter används, vilket eliminerar CORS-varningar från Google Fonts.
 - TmpFiles-uppladdning går via same-origin proxy `/api/tmpfiles` med direkt-URL som fallback.
