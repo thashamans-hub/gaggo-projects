@@ -45,7 +45,7 @@ async function test(name, fn) {
   const Z = sandbox.TerrariumZip;
   const ZR = sandbox.TerrariumZipReader;
 
-  console.log('\n🌿 GaGGos Projects 15.4 – tester\n');
+  console.log('\n🌿 GaGGos Projects 15.5 – tester\n');
 
   await test('standardinställningar laddas', () => {
     assert.strictEqual(T.settings.provider, 'tmpfiles');
