@@ -933,14 +933,57 @@
     var wrap = $('#projectGrid');
     if (!wrap) return;
     var projects = settings.projects || [];
+    var isLocal = /^(file:|http:\/\/(localhost|127\.0\.0\.1))/i.test(location.href);
     wrap.innerHTML = projects.map(function (p, i) {
-      return '<a class="project-card reveal" style="--pc:' + esc(p.accent || '#9bff5a') + ';animation-delay:' + (i * 70) + 'ms" href="' + esc(p.href || '#') + '"' +
-        (String(p.href || '').indexOf('http') === 0 ? ' target="_blank" rel="noopener"' : '') + '>' +
-        '<div class="project-top"><span class="project-ic">' + esc(p.icon || '🌿') + '</span>' + icon('external') + '</div>' +
-        '<h3>' + esc(p.name) + '</h3><p>' + esc(p.desc || '') + '</p>' +
-        '<div class="tags">' + (p.tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div></a>';
+      var href = isLocal ? (p.href || '#') : (p.githubHref || p.href || '#');
+      var gh = p.githubHref || 'https://github.com/thashamans-hub?tab=repositories';
+      return '<article class="project-card reveal" style="--pc:' + esc(p.accent || '#9bff5a') + ';animation-delay:' + (i * 70) + 'ms">' +
+        '<a class="project-main" href="' + esc(href) + '"' +
+          (String(href).indexOf('http') === 0 ? ' target="_blank" rel="noopener"' : '') + '>' +
+          '<div class="project-top"><span class="project-ic">' + esc(p.icon || '🌿') + '</span>' + icon('external') + '</div>' +
+          '<h3>' + esc(p.name) + '</h3><p>' + esc(p.desc || '') + '</p>' +
+          '<div class="tags">' + (p.tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div>' +
+        '</a>' +
+        '<a class="project-gh" href="' + esc(gh) + '" target="_blank" rel="noopener">GitHub ↗</a>' +
+      '</article>';
     }).join('');
     observeReveals(wrap);
+  }
+
+  function loadGitHubInfo() {
+    var profile = $('#ghProfile'), repo = $('#ghRepo');
+    if (!profile || !repo) return;
+    var repoUrl = 'https://github.com/thashamans-hub/gaggo-projects';
+    var fallback = function () {
+      profile.innerHTML = '<div class="gh-head"><h3>GaGGo på GitHub</h3></div>' +
+        '<p class="gh-bio">Profilstatistiken kunde inte hämtas just nu – länkarna fungerar ändå.</p>' +
+        '<div class="gh-links"><a href="https://github.com/thashamans" target="_blank" rel="noopener">Profil ↗</a><a href="' + repoUrl + '" target="_blank" rel="noopener">Repo ↗</a></div>';
+      repo.innerHTML = '<div class="gh-head"><h3>gaggo-projects</h3></div>' +
+        '<p class="gh-bio">Repo-statistiken är inte tillgänglig offline.</p>' +
+        '<div class="gh-links"><a href="' + repoUrl + '" target="_blank" rel="noopener">Öppna repo ↗</a><a href="' + repoUrl + '/archive/refs/heads/main.zip" target="_blank" rel="noopener">Ladda ner ZIP ↗</a></div>';
+    };
+    var get = function (url) {
+      return fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+    };
+    Promise.all([
+      get('https://api.github.com/users/thashamans'),
+      get('https://api.github.com/repos/thashamans-hub/gaggo-projects')
+    ]).then(function (res) {
+      var u = res[0], r = res[1];
+      profile.innerHTML = '<div class="gh-head"><img class="gh-avatar" src="' + esc(u.avatar_url) + '" alt="">' +
+        '<div><h3>' + esc(u.login) + '</h3><span>Offentlig GitHub-profil</span></div></div>' +
+        (u.bio ? '<p class="gh-bio">' + esc(u.bio) + '</p>' : '') +
+        '<div class="gh-stats"><span><b>' + (u.public_repos || 0) + '</b>repos</span><span><b>' + (u.followers || 0) + '</b>följare</span><span><b>' + (u.following || 0) + '</b>följer</span></div>' +
+        '<div class="gh-links"><a href="' + esc(u.html_url) + '" target="_blank" rel="noopener">Profil ↗</a><a href="https://github.com/thashamans?tab=repositories" target="_blank" rel="noopener">Alla repo ↗</a></div>';
+      repo.innerHTML = '<div class="gh-head"><h3>' + esc(r.name) + '</h3><span>publikt repo · main</span></div>' +
+        '<p class="gh-bio">' + esc(r.description || 'GaGGos Projects – den gröna filvaulten.') + '</p>' +
+        '<div class="gh-stats"><span><b>' + (r.stargazers_count || 0) + '</b>stars</span><span><b>' + (r.forks_count || 0) + '</b>forks</span><span><b>' + (r.open_issues_count || 0) + '</b>issues</span></div>' +
+        '<div class="gh-links"><a href="' + esc(r.html_url) + '" target="_blank" rel="noopener">Repo ↗</a><a href="' + esc(r.html_url) + '/archive/refs/heads/main.zip" target="_blank" rel="noopener">ZIP ↗</a><a href="https://thashamans-hub.github.io/gaggo-projects/" target="_blank" rel="noopener">Demo ↗</a></div>';
+      observeReveals($('#community'));
+    }).catch(fallback);
   }
 
   /* ---------------- Scroll reveal ---------------- */
@@ -1900,7 +1943,7 @@
       Store.checkCatbox().then(function () { boot(true); }).catch(function () { boot(true); });
       return;
     }
-    applyTheme(); applyWallpaper(); applyWallpaperRotation(); applyBrand(); renderProvider(); renderProjects(); renderTrash(); renderTagColors();
+    applyTheme(); applyWallpaper(); applyWallpaperRotation(); applyBrand(); renderProvider(); renderProjects(); renderTrash(); renderTagColors(); loadGitHubInfo();
     var ab = $('#ambientBtn'); if (ab) ab.classList.toggle('active', !!state.ambient);
     if (!state.autoRenewStarted) { state.autoRenewStarted = true; startAutoRenew(); }
     var dot = $('#activityDot'); if (dot) dot.hidden = Store.getActivity().length === 0;

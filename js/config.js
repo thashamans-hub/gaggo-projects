@@ -53,6 +53,7 @@ window.TERRARIUM_CONFIG = {
       tags: ["Node.js", "PWA", "iOS", "Android"],
       icon: "📺",
       href: "../PhilipsTheOneTvRemote/README.md",
+      githubHref: "https://github.com/thashamans-hub?tab=repositories",
       accent: "#8affc1"
     },
     {
@@ -61,6 +62,7 @@ window.TERRARIUM_CONFIG = {
       tags: ["Vanilla JS", "SVG", "Tizen", "CLI"],
       icon: "⌚",
       href: "../GearS3Studio/README.md",
+      githubHref: "https://github.com/thashamans-hub?tab=repositories",
       accent: "#c9ff5a"
     }
   ]

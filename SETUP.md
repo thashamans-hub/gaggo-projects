@@ -121,7 +121,14 @@ Alla tre är gratis för statiska sajter. Ingen `npm install` behövs.
 - Projektkorten längst ned redigeras i `js/config.js` under `projects`.
 - Utseende: accentfärg, wallpaper på/av, animationer och standardvy i inställningarna.
 
-## 4. Fixar i 15.2
+## 4. Nytt i 16.0
+
+- **GitHub-sektion**: profil, repo-statistik och direktlänkar via GitHubs publika API.
+- **Projektkort**: lokala sökvägar lokalt, GitHub-länkar i publicerad miljö.
+
+## 4m. Tidigare versioner
+
+### Fixar i 15.2
 
 - Inga Google Fonts (systemfonter) och TmpFiles via `/api/tmpfiles`-proxy → rena konsol-loggar.
 

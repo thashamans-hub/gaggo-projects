@@ -38,6 +38,10 @@
 ## Fixar i 15.3
 - GitHub Pages: proxyn används bara på Netlify; TmpFiles-upload retry:ar automatiskt (inga 405-fel i konsolen).
 
+## Nya i 16.0
+- GitHub-integrationssektion med profil och repo-statistik via `api.github.com` (CORS tillåts). Fallback med länkar om nätverket saknas.
+- Projektkort använder lokala sökvägar vid lokal körning och GitHub-länkar i deployad miljö.
+
 ## Fixar i 15.2
 - Inga externa typsnitt – systemfonter används, vilket eliminerar CORS-varningar från Google Fonts.
 - TmpFiles-uppladdning går via same-origin proxy `/api/tmpfiles` med direkt-URL som fallback.
