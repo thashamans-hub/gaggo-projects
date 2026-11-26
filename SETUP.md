@@ -1,6 +1,8 @@
 # 🌿 GaGGos Projects – igång på 5 minuter
 
-**Live:** https://gaggo-projects.netlify.app (permanent, offentlig, gratis)
+**Live (Netlify):** https://gaggo-projects.netlify.app
+**Live (GitHub Pages):** https://thashamans-hub.github.io/gaggo-projects/
+**Repo:** https://github.com/thashamans-hub/gaggo-projects (push till `main` uppdaterar GitHub Pages automatiskt)
 
 Sajten ligger i mappen `site/`. **Standardläget är TmpFiles**: ett gratis moln utan konto som ger riktiga publika länkar direkt. Observera att TmpFiles-länkar är **tillfälliga (ca 1 timme)** – för permanent lagring, anslut Supabase eller Cloudinary nedan (båda har gratisplaner utan kreditkort).
 

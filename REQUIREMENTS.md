@@ -26,6 +26,7 @@
 ## Hostingtjänst
 - Netlify (använt här), Vercel, Cloudflare Pages eller GitHub Pages – alla gratis för statiska sajter.
 - Netlify Drop stöder **inte** Netlify Functions; sajten är därför helt statisk.
+- GitHub Pages: deployas från `main`/root; `_redirects` ignoreras där, men TmpFiles fungerar via direkt-URL med automatisk retry.
 - `_redirects` måste finnas med vid deploy – den proxy:ar `/api/filehost` till Catbox och gör permanenta länkar möjliga utan konto.
 - `serve.js` har motsvarande proxy för lokal utveckling (Node 18+ med `fetch`).
 
