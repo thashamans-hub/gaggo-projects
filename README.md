@@ -4,9 +4,9 @@
 
 **Din gröna drop för allt.** Ladda upp filer, få länkar på sekunder och odla en samling som faktiskt stannar kvar.
 
-[![Live på Netlify](https://img.shields.io/badge/Live-Netlify-9bff5a?style=for-the-badge)](https://gaggo-projects.netlify.app)
-[![GitHub Pages](https://img.shields.io/badge/Demo-GitHub%20Pages-8affc1?style=for-the-badge)](https://thashamans-hub.github.io/gaggo-projects/)
-[![Licens: gratis](https://img.shields.io/badge/Pris-0%20kr-ffb347?style=for-the-badge)](https://github.com/thashamans-hub/gaggo-projects)
+[![Live på Netlify](docs/badges/live-netlify.svg)](https://gaggo-projects.netlify.app)
+[![Demo på GitHub Pages](docs/badges/github-pages.svg)](https://thashamans-hub.github.io/gaggo-projects/)
+[![Pris 0 kr](docs/badges/free.svg)](https://github.com/thashamans-hub/gaggo-projects)
 
 <img src="docs/screenshot.png" alt="GaGGos Projects – mörk grön terrarie med klocka, lizard och fästa filer" width="860">
 
