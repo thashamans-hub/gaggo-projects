@@ -1,5 +1,5 @@
 /* TERRARIUM service worker — offline shell + cache */
-var CACHE = 'gaggo-v26';
+var CACHE = 'gaggo-v27';
 var SHELL = [
   './',
   './index.html',

@@ -936,7 +936,7 @@
     var isLocal = /^(file:|http:\/\/(localhost|127\.0\.0\.1))/i.test(location.href);
     wrap.innerHTML = projects.map(function (p, i) {
       var href = isLocal ? (p.href || '#') : (p.githubHref || p.href || '#');
-      var gh = p.githubHref || 'https://github.com/thashamans-hub?tab=repositories';
+      var gh = p.githubHref || 'https://github.com/thashamans-hub-hub?tab=repositories';
       return '<article class="project-card reveal" style="--pc:' + esc(p.accent || '#9bff5a') + ';animation-delay:' + (i * 70) + 'ms">' +
         '<a class="project-main" href="' + esc(href) + '"' +
           (String(href).indexOf('http') === 0 ? ' target="_blank" rel="noopener"' : '') + '>' +
@@ -953,11 +953,11 @@
   function loadGitHubInfo() {
     var profile = $('#ghProfile'), repo = $('#ghRepo');
     if (!profile || !repo) return;
-    var repoUrl = 'https://github.com/thashamans-hub/gaggo-projects';
+    var repoUrl = 'https://github.com/thashamans-hub-hub/gaggo-projects';
     var fallback = function () {
       profile.innerHTML = '<div class="gh-head"><h3>GaGGo på GitHub</h3></div>' +
         '<p class="gh-bio">Profilstatistiken kunde inte hämtas just nu – länkarna fungerar ändå.</p>' +
-        '<div class="gh-links"><a href="https://github.com/thashamans" target="_blank" rel="noopener">Profil ↗</a><a href="' + repoUrl + '" target="_blank" rel="noopener">Repo ↗</a></div>';
+        '<div class="gh-links"><a href="https://github.com/thashamans-hub" target="_blank" rel="noopener">Profil ↗</a><a href="' + repoUrl + '" target="_blank" rel="noopener">Repo ↗</a></div>';
       repo.innerHTML = '<div class="gh-head"><h3>gaggo-projects</h3></div>' +
         '<p class="gh-bio">Repo-statistiken är inte tillgänglig offline.</p>' +
         '<div class="gh-links"><a href="' + repoUrl + '" target="_blank" rel="noopener">Öppna repo ↗</a><a href="' + repoUrl + '/archive/refs/heads/main.zip" target="_blank" rel="noopener">Ladda ner ZIP ↗</a></div>';
@@ -969,7 +969,7 @@
       });
     };
     Promise.all([
-      get('https://api.github.com/users/thashamans'),
+      get('https://api.github.com/users/thashamans-hub'),
       get('https://api.github.com/repos/thashamans-hub/gaggo-projects')
     ]).then(function (res) {
       var u = res[0], r = res[1];
@@ -977,7 +977,7 @@
         '<div><h3>' + esc(u.login) + '</h3><span>Offentlig GitHub-profil</span></div></div>' +
         (u.bio ? '<p class="gh-bio">' + esc(u.bio) + '</p>' : '') +
         '<div class="gh-stats"><span><b>' + (u.public_repos || 0) + '</b>repos</span><span><b>' + (u.followers || 0) + '</b>följare</span><span><b>' + (u.following || 0) + '</b>följer</span></div>' +
-        '<div class="gh-links"><a href="' + esc(u.html_url) + '" target="_blank" rel="noopener">Profil ↗</a><a href="https://github.com/thashamans?tab=repositories" target="_blank" rel="noopener">Alla repo ↗</a></div>';
+        '<div class="gh-links"><a href="' + esc(u.html_url) + '" target="_blank" rel="noopener">Profil ↗</a><a href="https://github.com/thashamans-hub?tab=repositories" target="_blank" rel="noopener">Alla repo ↗</a></div>';
       repo.innerHTML = '<div class="gh-head"><h3>' + esc(r.name) + '</h3><span>publikt repo · main</span></div>' +
         '<p class="gh-bio">' + esc(r.description || 'GaGGos Projects – den gröna filvaulten.') + '</p>' +
         '<div class="gh-stats"><span><b>' + (r.stargazers_count || 0) + '</b>stars</span><span><b>' + (r.forks_count || 0) + '</b>forks</span><span><b>' + (r.open_issues_count || 0) + '</b>issues</span></div>' +
