@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GaGGos Projects — Din gröna drop</title>
+  <meta name="description" content="En lugn, grön plats för alla dina filer. Ladda upp vad som helst och få en delningslänk – gratis.">
+  <meta name="theme-color" content="#070d0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/zip.js" defer></script>
+  <script src="js/zipread.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- FULLSKÄRMS-BAKGRUND -->
+  <div class="wallpaper" aria-hidden="true"></div>
+  <div class="wallpaper-tint" aria-hidden="true"></div>
+  <canvas id="spores" aria-hidden="true"></canvas>
+
+  <!-- Ikoner -->
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="ic-cloud" viewBox="0 0 24 24"><path d="M17.5 19H7a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 10.5a4.25 4.25 0 0 1-.5 8.5Z"/></symbol>
+    <symbol id="ic-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 8a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-8V3"/><path d="M6.5 15h11"/></symbol>
+    <symbol id="ic-files" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v12"/><path d="M14 3l5 5v11a2 2 0 0 1-2 2H9"/><path d="M8 12h8M8 16h6"/></symbol>
+    <symbol id="ic-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="ic-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 17 4.5-4.5 3 3 3.5-3.5L20 17"/></symbol>
+    <symbol id="ic-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1-1"/></symbol>
+    <symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="ic-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></symbol>
+    <symbol id="ic-star-on" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z" fill="currentColor"/></symbol>
+    <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+    <symbol id="ic-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></symbol>
+    <symbol id="ic-loader" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></symbol>
+    <symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></symbol>
+    <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H21v4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></symbol>
+    <symbol id="ic-video" viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m17 10 4-2.5v9L17 14"/></symbol>
+    <symbol id="ic-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="ic-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></symbol>
+    <symbol id="ic-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></symbol>
+    <symbol id="ic-file" viewBox="0 0 24 24"><path d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9z"/><path d="M13 3v6h6"/></symbol>
+    <symbol id="ic-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="ic-leaf" viewBox="0 0 24 24"><path d="M20 4C10 4 4 9 4 16a4 4 0 0 0 4 4c7 0 12-6 12-16Z"/><path d="M4 20c3-5 7-8 12-10"/></symbol>
+    <symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M4 19h16"/></symbol>
+    <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></symbol>
+    <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="ic-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 17l.7 1.8L21.5 19l-1.8.7L19 21.5l-.7-1.8L16.5 19l1.8-.2L19 17Z"/></symbol>
+    <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="ic-command" viewBox="0 0 24 24"><path d="M9 6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6Z"/></symbol>
+    <symbol id="ic-chevron" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="ic-pin" viewBox="0 0 24 24"><path d="m15 3 6 6-3 1-3 4 1 4-2 2-4-4-5 5 1-5-4-4 2-2 4 1 4-3 1-3Z"/></symbol>
+    <symbol id="ic-edit" viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m14 6 4 4"/></symbol>
+    <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="ic-trophy" viewBox="0 0 24 24"><path d="M7 4h10v6a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4M12 15v4M8 21h8M9 19h6"/></symbol>
+    <symbol id="ic-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="ic-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+    <symbol id="ic-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+  </svg>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="wrap nav-in">
+      <a class="logo" href="#top">
+        <span class="logo-mark">🌿</span>
+        <span><span data-brand>GaGGos Projects</span> <small>.xyz</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#upload">Ladda upp</a>
+        <a href="#vault">Min samling</a>
+        <a href="#projects">Projekt</a>
+        <span id="providerChip"></span>
+        <button class="icon-btn" id="ambientBtn" title="Ambient-ljud" aria-label="Ambient-ljud"><svg class="ic"><use href="#ic-music"></use></svg></button>
+        <button class="icon-btn" id="cleanupBtn" title="Städassistent" aria-label="Städassistent"><svg class="ic"><use href="#ic-sparkle"></use></svg></button>
+        <button class="icon-btn" id="trashBtn" title="Papperskorg" aria-label="Papperskorg"><svg class="ic"><use href="#ic-trash"></use></svg><i class="nav-dot" id="trashDot" hidden></i></button>
+        <button class="icon-btn" id="zenBtn" title="Zen-läge (Z)" aria-label="Zen-läge"><svg class="ic"><use href="#ic-eye"></use></svg></button>
+        <button class="icon-btn" id="insightsBtn" title="Insikter" aria-label="Insikter"><svg class="ic"><use href="#ic-chart"></use></svg></button>
+        <button class="icon-btn" id="achievementsBtn" title="Utmärkelser" aria-label="Utmärkelser"><svg class="ic"><use href="#ic-trophy"></use></svg><i class="nav-dot" id="achievementDot" hidden></i></button>
+        <button class="icon-btn" id="activityBtn" title="Aktivitet" aria-label="Aktivitet"><svg class="ic"><use href="#ic-activity"></use></svg><i class="nav-dot" id="activityDot" hidden></i></button>
+        <button class="icon-btn" id="paletteBtn" title="Kommandopalett (Ctrl+K)" aria-label="Kommandopalett"><svg class="ic"><use href="#ic-command"></use></svg></button>
+        <button class="icon-btn" id="installBtn" title="Installera app" aria-label="Installera app" hidden><svg class="ic"><use href="#ic-download"></use></svg></button>
+        <button class="icon-btn" data-open-modal="shortcutsModal" title="Kortkommandon (?)" aria-label="Kortkommandon"><svg class="ic"><use href="#ic-info"></use></svg></button>
+        <button class="icon-btn" data-open-modal="settingsModal" title="Inställningar" aria-label="Inställningar"><svg class="ic"><use href="#ic-settings"></use></svg></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top" class="wrap">
+
+    <!-- HERO -->
+    <header class="hero reveal">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> Grow your own cloud · 100% gratis</span>
+        <h1>Allt ditt.<span class="grad">Allt här.</span></h1>
+        <p class="lede">En lugn, grön plats för <strong>alla dina filer</strong>. Släng in bilder, kod, dokument, ljud – vad som helst – och få en länk på sekunder. Ingen server, ingen kostnad. Bara du och din samling. 🦎</p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" id="scrollUpload"><svg class="ic"><use href="#ic-upload"></use></svg> Börja ladda upp</button>
+          <button class="btn btn-ghost" id="howItWorks"><svg class="ic"><use href="#ic-info"></use></svg> Så funkar det</button>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img src="assets/terrarium.svg" alt="Ett gluster terrarium med växter och en lizard" width="420" height="460">
+        <div class="orbit-badge"><b>0 kr / mån</b> whole lotta chill</div>
+      </div>
+    </header>
+
+    <div class="banner upgrade-banner" id="upgradeBanner" hidden>
+      <svg class="ic"><use href="#ic-cloud"></use></svg>
+      <div class="banner-txt"><b>Tillfälliga länkar.</b> Filer fungerar nu via TmpFiles, men länkarna går ut efter ca 1 timme och filistan är bara synlig i den här webbläsaren. Anslut ett gratis moln för en riktigt uppkopplad webbplats.</div>
+      <button class="btn btn-primary" data-open-modal="settingsModal">Gör permanent →</button>
+    </div>
+
+    <div class="banner fallback-banner" id="fallbackBanner" hidden>
+      <svg class="ic"><use href="#ic-alert"></use></svg>
+      <div class="banner-txt"><b>Ogiltig molnkonfiguration.</b> Jag använder TmpFiles istället så uppladdningen fungerar direkt. Öppna inställningarna för att ansluta Supabase/Cloudinary permanent.</div>
+      <button class="btn btn-ghost" data-open-modal="settingsModal">Inställningar</button>
+    </div>
+
+    <div class="banner offline-banner" id="offlineBanner" hidden>
+      <svg class="ic"><use href="#ic-alert"></use></svg>
+      <div class="banner-txt"><b>Offline.</b> Uppladdningar är pausade tills anslutningen kommer tillbaka. Du kan fortfarande bläddra i terrariet.</div>
+    </div>
+
+    <div class="banner" id="demoBanner" hidden>
+      <svg class="ic"><use href="#ic-flask"></use></svg>
+      <div class="banner-txt"><b>Demo-läge.</b> Filer sparas just nu bara i din webbläsare. Anslut ett gratis moln så får du riktiga, delbara länkar.</div>
+      <button class="btn btn-primary" data-open-modal="settingsModal">Anslut gratis moln →</button>
+    </div>
+
+    <!-- STATS + ANALYTICS -->
+    <div class="stats" id="stats"></div>
+    <div class="analytics reveal">
+      <div class="xp-row">
+        <div><span class="sec-kicker">Terrarium XP</span><strong id="xpLabel">Nivå 1 · Ägg</strong></div>
+        <div class="xp-track"><i id="xpFill"></i></div>
+      </div>
+      <div class="storage-row">
+        <div class="storage-bar" id="storageBar"></div>
+        <div class="storage-legend" id="storageLegend"></div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <section id="upload" class="reveal">
+      <div class="sec-head">
+        <div>
+          <div class="sec-kicker">01 / Drop it like it's hot</div>
+          <h2 class="sec-title">Släng in nåt 🌱</h2>
+          <p class="sec-desc">Dra och släpp filer eller hela mappar. Vi fixar länken åt dig.</p>
+        </div>
+      </div>
+
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Välj eller släpp filer att ladda upp">
+        <div class="drop-icon"><svg class="ic"><use href="#ic-upload"></use></svg></div>
+        <h3>Dra dina filer hit</h3>
+        <p>eller <span class="browse">bläddra på din dator</span></p>
+        <p class="drop-limit">Bilder · video · ljud · kod · dokument · arkiv – allt går. Max 25 filer åt gången.</p>
+        <button class="btn btn-ghost folder-btn" id="folderBtn" type="button"><svg class="ic"><use href="#ic-folder"></use></svg> Ladda upp en mapp</button>
+      </div>
+      <input class="hidden" type="file" id="fileInput" multiple>
+      <input class="hidden" type="file" id="folderInput" webkitdirectory directory multiple>
+      <div class="queue" id="uploadQueue"></div>
+
+      <div class="note" id="catboxNote" hidden>
+        <b>Permanent läge:</b> filer laddas upp till Catbox via sajtens proxy och får länkar som stannar kvar. Obs: vissa Netlify-planer blockeras av Catbox – testknappen avgör. Filistan sparas lokalt – för delad lista, anslut Supabase.
+      </div>
+
+      <div class="note" id="tmpfilesNote" hidden>
+        <b>TmpFiles-läge:</b> filer får riktiga publika länkar direkt, utan konto. Länkarna är tillfälliga (lagringen rensas av tjänsten). För permanent lagring: anslut Supabase eller Cloudinary i inställningarna.
+      </div>
+
+      <div class="note" id="cloudinaryNote" hidden>
+        <b>Cloudinary-tips:</b> Radering i molnet kräver en signerad API-nyckel, så här tar bort-knappen bara bort filen ur listan. Vill du kunna radera på riktigt? Byt till Supabase i inställningarna.
+      </div>
+    </section>
+
+    <!-- VAULT -->
+    <section id="vault" class="reveal">
+      <div class="sec-head">
+        <div>
+          <div class="sec-kicker">02 / Din samling</div>
+          <h2 class="sec-title">Terrariet</h2>
+          <p class="sec-desc">Allt du laddat upp, samlat på ett ställe. Förhandsvisa, sök och dela direkt.</p>
+        </div>
+        <div class="view-toggle">
+          <button id="viewGrid" class="vt active" title="Rutnät" aria-label="Rutnät"><svg class="ic"><use href="#ic-grid"></use></svg></button>
+          <button id="viewList" class="vt" title="Lista" aria-label="Lista"><svg class="ic"><use href="#ic-list"></use></svg></button>
+        </div>
+      </div>
+
+      <div class="vault-layout">
+        <aside class="collections" id="collections" aria-label="Samlingar">
+          <div class="coll-title"><svg class="ic"><use href="#ic-leaf"></use></svg> Samlingar</div>
+          <div id="collectionList"></div>
+        </aside>
+        <div class="vault-main">
+          <div class="toolbar">
+        <label class="search">
+          <svg class="ic"><use href="#ic-search"></use></svg>
+          <input type="text" id="searchInput" placeholder="Sök… (fuzzy)  tag:work  content:hej  ext:pdf  starred" autocomplete="off">
+        </label>
+        <select class="sort" id="sortSelect" aria-label="Sortera">
+          <option value="newest">Nyast först</option>
+          <option value="oldest">Äldst först</option>
+          <option value="name">Namn A–Ö</option>
+          <option value="size">Störst först</option>
+          <option value="starred">Stjärnmärkta först</option>
+        </select>
+        <span id="resultCount">0 filer</span>
+      </div>
+
+      <div class="filters" id="filterBar">
+        <button class="chip active" data-filter="all">Alla</button>
+        <button class="chip" data-filter="starred">★ Stjärnor</button>
+        <button class="chip" data-filter="image">Bilder</button>
+        <button class="chip" data-filter="video">Video</button>
+        <button class="chip" data-filter="audio">Ljud</button>
+        <button class="chip" data-filter="code">Kod</button>
+        <button class="chip" data-filter="doc">Dokument</button>
+        <button class="chip" data-filter="archive">Arkiv</button>
+        <button class="chip" data-filter="other">Övrigt</button>
+      </div>
+
+      <div class="selection-bar" id="selectionBar" hidden>
+        <strong id="selectedCount">0 filer valda</strong>
+        <div class="sel-actions">
+          <button data-bulk="copy"><svg class="ic"><use href="#ic-link"></use></svg> Länkar</button>
+          <button data-bulk="markdown"><svg class="ic"><use href="#ic-file"></use></svg> Markdown</button>
+          <button data-bulk="renew"><svg class="ic"><use href="#ic-undo"></use></svg> Förnya länkar</button>
+          <button data-bulk="star"><svg class="ic"><use href="#ic-star"></use></svg> Stjärnmärk</button>
+          <button data-bulk="pin"><svg class="ic"><use href="#ic-pin"></use></svg> Fäst</button>
+          <button data-bulk="tags"><svg class="ic"><use href="#ic-sparkle"></use></svg> Taggar</button>
+          <button data-bulk="folder"><svg class="ic"><use href="#ic-folder"></use></svg> Flytta till mapp</button>
+          <button data-bulk="rename"><svg class="ic"><use href="#ic-edit"></use></svg> Byt namn</button>
+          <button data-bulk="download"><svg class="ic"><use href="#ic-download"></use></svg> Ladda ner</button>
+          <button data-bulk="rename"><svg class="ic"><use href="#ic-edit"></use></svg> Byt namn</button>
+          <button data-bulk="move"><svg class="ic"><use href="#ic-folder"></use></svg> Flytta</button>
+          <button data-bulk="duplicate"><svg class="ic"><use href="#ic-files"></use></svg> Duplicera</button>
+          <button data-bulk="zip"><svg class="ic"><use href="#ic-archive"></use></svg> ZIP</button>
+          <button data-bulk="delete" class="danger"><svg class="ic"><use href="#ic-trash"></use></svg> Ta bort</button>
+          <button data-bulk="clear"><svg class="ic"><use href="#ic-close"></use></svg></button>
+        </div>
+      </div>
+
+      <div class="file-grid" id="fileGrid"></div>
+          <div class="empty" id="emptyState" hidden>
+            <div class="empty-ic">🦎</div>
+            <h3 id="emptyTitle">Terrariet är tomt</h3>
+            <p id="emptyText">Släng in din första fil ovan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="reveal">
+      <div class="sec-head">
+        <div>
+          <div class="sec-kicker">03 / Växtsamlingen</div>
+          <h2 class="sec-title">Mina projekt</h2>
+          <p class="sec-desc">Allt byggt med kärlek, kaffe och alldeles för många tabs.</p>
+        </div>
+      </div>
+      <div class="project-grid" id="projectGrid"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap foot-in">
+      <span>🌿 <b data-brand>GaGGos Projects</b> · by <b data-owner>GaGGo</b> · <span data-tagline>Din gröna drop för allt.</span></span>
+      <span>Gjort för att vara fritt. <a href="#" data-open-modal="infoModal">Hur då?</a> · <a href="#" data-open-modal="shortcutsModal">Kortkommandon</a></span>
+    </div>
+  </footer>
+
+  <!-- SETTINGS -->
+  <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="settingsTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="settingsTitle">⚙️ Inställningar</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <div class="note"><b>Gratis moln, inga kort:</b> Välj Supabase (allt + radering) eller Cloudinary (enklast). Steg-för-steg finns i <code>site/SETUP.md</code>.</div>
+
+        <div class="field"><label for="setProvider">Lagringsleverantör</label>
+          <select id="setProvider">
+            <option value="catbox">Permanent gratis · Catbox (inget konto)</option>
+            <option value="tmpfiles">Tillfälligt · TmpFiles (inget konto)</option>
+            <option value="local">Lokal demo (ingen upload till molnet)</option>
+            <option value="supabase">Supabase Storage — permanent & delad</option>
+            <option value="cloudinary">Cloudinary — permanent filer</option>
+          </select>
+        </div>
+        <div class="connect-test">
+          <button class="btn btn-ghost" id="testConnection" type="button"><svg class="ic"><use href="#ic-activity"></use></svg> Testa anslutning</button>
+          <span id="connectionResult" class="hint"></span>
+        </div>
+        <div class="note" style="margin:0 0 16px">
+          <b>Steg för steg:</b> 1) Skapa ett gratis konto hos Supabase → 2) Kör <code>supabase-setup.sql</code> i SQL Editor → 3) Klistra in Project URL + anon-nyckel och spara. Filistan blir då synlig för alla.
+        </div>
+
+        <div id="supaFields" hidden>
+          <p class="subhead">Supabase</p>
+          <div class="field"><label for="setSupaUrl">Project URL</label><input type="text" id="setSupaUrl" placeholder="https://xxxx.supabase.co"></div>
+          <div class="field"><label for="setSupaKey">Anon / public key</label><input type="password" id="setSupaKey" placeholder="eyJhbGciOi…"><div class="hint">Den här nyckeln är menad att vara publik. Sätt storage-policies du är bekväm med.</div></div>
+          <div class="grid2">
+            <div class="field"><label for="setSupaBucket">Bucket</label><input type="text" id="setSupaBucket" placeholder="vault"></div>
+            <div class="field"><label>Synka metadata</label><label class="check"><input type="checkbox" id="setSupaSync"> Spara filistan i vault_files</label></div>
+          </div>
+        </div>
+
+        <div id="cloudFields" hidden>
+          <p class="subhead">Cloudinary</p>
+          <div class="grid2">
+            <div class="field"><label for="setCloudName">Cloud name</label><input type="text" id="setCloudName" placeholder="min-cloud"></div>
+            <div class="field"><label for="setCloudPreset">Unsigned upload preset</label><input type="text" id="setCloudPreset" placeholder="terrarium_unsigned"></div>
+          </div>
+          <div class="field"><label for="setCloudFolder">Folder (valfritt)</label><input type="text" id="setCloudFolder" placeholder="terrarium"></div>
+        </div>
+
+        <div class="divider"></div>
+        <p class="subhead">Utseende</p>
+        <div class="field"><label for="setBrandName">Sidans namn</label><input type="text" id="setBrandName" placeholder="THE TERRARIUM"></div>
+        <div class="grid2">
+          <div class="field"><label for="setBrandOwner">Ditt namn</label><input type="text" id="setBrandOwner" placeholder="Genc"></div>
+          <div class="field"><label for="setBrandTagline">Tagline</label><input type="text" id="setBrandTagline" placeholder="Din gröna drop för allt."></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="setAccent">Accentfärg</label>
+            <select id="setAccent"><option value="lime">Lime</option><option value="mint">Mint</option><option value="amber">Amber</option><option value="violet">Violet</option></select>
+          </div>
+          <div class="field"><label for="setView">Standardvy</label>
+            <select id="setView"><option value="grid">Rutnät</option><option value="list">Lista</option></select>
+          </div>
+        </div>
+        <div class="custom-accent">
+          <label class="check"><input type="checkbox" id="setUseCustom"> Egen accentfärg</label>
+          <input type="color" id="setAccentCustom" value="#ff6b9d" aria-label="Egen accentfärg">
+          <span id="accentPreview" class="accent-preview"></span>
+        </div>
+        <div class="check" style="margin:6px 0 10px"><input type="checkbox" id="setWallpaper"> Fullskärmsbakgrund (wallpaper)</div>
+        <div class="field" style="margin-bottom:10px"><label for="setWallpaperStyle">Bakgrundsstil</label>
+          <select id="setWallpaperStyle">
+            <option value="jungle">Jungle · grön</option>
+            <option value="night">Night swamp · violet</option>
+            <option value="amber">Amber dusk · orange</option>
+          </select>
+        </div>
+        <label class="check" style="margin-bottom:8px"><input type="checkbox" id="setRotateWallpapers"> Rotera bakgrunden automatiskt</label>
+        <label class="check" style="margin-bottom:8px"><input type="checkbox" id="setAmbient"> Ambient-ljud igång vid start</label>
+        <label class="check" style="margin-bottom:8px"><input type="checkbox" id="setAutoRenew"> Förnya tillfälliga länkar automatiskt</label>
+        <div class="wallpaper-tools">
+          <label class="check"><input type="checkbox" id="setCustomWallpaper"> Använd egen bakgrundsbild</label>
+          <div class="wp-buttons">
+            <button class="btn btn-ghost" id="pickWallpaper" type="button"><svg class="ic"><use href="#ic-image"></use></svg> Välj bild</button>
+            <button class="btn btn-ghost" id="resetWallpaper" type="button"><svg class="ic"><use href="#ic-undo"></use></svg> Återställ</button>
+          </div>
+          <div class="hint">Bilden sparas lokalt i webbläsaren och visas som hela sidans bakgrund.</div>
+          <input type="file" id="wallpaperFile" accept="image/*" hidden>
+        </div>
+        <div class="check" style="margin-top:10px"><input type="checkbox" id="setMotion"> Animationer och rörelse</div>
+
+        <div class="divider"></div>
+        <p class="subhead">Taggfärger</p>
+        <div class="tag-color-list" id="tagColorList"></div>
+        <div class="hint">Färgerna används i samlingar och på filkort. Ändringar sparas direkt.</div>
+
+        <div class="divider"></div>
+        <p class="subhead">Backup av filistan</p>
+        <div class="grid2">
+          <button class="btn btn-ghost" id="exportMeta"><svg class="ic"><use href="#ic-download"></use></svg> Exportera JSON</button>
+          <button class="btn btn-ghost" id="importMeta"><svg class="ic"><use href="#ic-upload"></use></svg> Importera JSON</button>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <button class="btn btn-ghost" id="exportCsv"><svg class="ic"><use href="#ic-file"></use></svg> Exportera CSV</button>
+          <span class="hint" style="align-self:center">CSV innehåller namn, länkar, taggar och metadata – öppnas i Excel/Sheets.</span>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <button class="btn btn-primary" id="createBackup"><svg class="ic"><use href="#ic-archive"></use></svg> Skapa full backup (.zip)</button>
+          <span class="hint" style="align-self:center">Innehåller alla filer, metadata, historik, utmärkelser och inställningar.</span>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <button class="btn btn-ghost" id="restoreBackupBtn" type="button"><svg class="ic"><use href="#ic-undo"></use></svg> Återställ från backup</button>
+          <span class="hint" style="align-self:center">Välj en tidigare .zip-backup för att återställa terrariet.</span>
+        </div>
+        <input type="file" id="restoreFile" accept=".zip,application/zip" hidden>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" id="resetSettings">Återställ</button><button class="btn btn-primary" id="saveSettings">Spara</button></div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="modal preview-modal" id="previewModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="previewTitle">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="preview-heading"><h2 id="previewTitle">Förhandsvisning</h2><span id="previewSub" class="preview-sub"></span></div>
+        <div class="preview-nav">
+          <button class="icon-btn" id="slideshowBtn" title="Slideshow" aria-label="Slideshow"><svg class="ic"><use href="#ic-image"></use></svg></button>
+          <button class="icon-btn" id="previewPrev" aria-label="Föregående"><svg class="ic" style="transform:rotate(90deg)"><use href="#ic-chevron"></use></svg></button>
+          <button class="icon-btn" id="previewNext" aria-label="Nästa"><svg class="ic" style="transform:rotate(-90deg)"><use href="#ic-chevron"></use></svg></button>
+          <button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button>
+        </div>
+      </div>
+      <div class="preview-body" id="previewBody"></div>
+      <div class="preview-edit">
+        <div class="grid2">
+          <div class="field"><label for="editName">Namn</label><input type="text" id="editName"></div>
+          <div class="field"><label for="editTags">Taggar (kommaseparerade)</label><input type="text" id="editTags" placeholder="design, viktigt, 2026"></div>
+        </div>
+        <div class="icon-picker" id="iconPicker" aria-label="Filikon">
+          <button type="button" data-icon="📄">📄</button><button type="button" data-icon="📝">📝</button>
+          <button type="button" data-icon="🖼️">🖼️</button><button type="button" data-icon="🎵">🎵</button>
+          <button type="button" data-icon="🎬">🎬</button><button type="button" data-icon="📦">📦</button>
+          <button type="button" data-icon="💾">💾</button><button type="button" data-icon="🌿">🌿</button>
+          <button type="button" data-icon="🦎">🦎</button><button type="button" data-icon="⭐">⭐</button>
+        </div>
+        <div class="version-history" id="versionHistory" hidden>
+          <div class="subhead">Ändringar</div>
+          <div id="versionList"></div>
+        </div>
+        <div class="image-tools" id="imageTools" hidden>
+          <button type="button" id="rotL" title="Rotera vänster">↺</button>
+          <button type="button" id="rotR" title="Rotera höger">↻</button>
+          <button type="button" id="flipH" title="Spegelvänd horisontellt">⇋</button>
+          <button type="button" id="flipV" title="Spegelvänd vertikalt">⇵</button>
+          <button type="button" id="resetImg" title="Återställ bild">Återställ</button>
+        </div>
+        <div class="field" style="margin-bottom:8px"><label for="editNote">Anteckning</label><textarea id="editNote" rows="2" placeholder="Skriv en anteckning om filen…"></textarea></div>
+        <div class="edit-actions">
+          <button class="btn btn-ghost" id="suggestTagsBtn" type="button"><svg class="ic"><use href="#ic-sparkle"></use></svg> Föreslå taggar</button>
+          <button class="btn btn-primary" id="saveEdit">Spara ändringar</button>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost danger" id="previewDelete"><svg class="ic"><use href="#ic-trash"></use></svg> Ta bort</button>
+        <button class="btn btn-ghost" id="previewStar"><svg class="ic"><use href="#ic-star"></use></svg></button>
+        <button class="btn btn-ghost" id="previewQr"><svg class="ic"><use href="#ic-grid"></use></svg> QR</button>
+        <button class="btn btn-primary" id="previewCopy"><svg class="ic"><use href="#ic-link"></use></svg> Kopiera länk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE -->
+  <div class="modal palette-modal" id="paletteModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="palette-box">
+      <div class="palette-input"><svg class="ic"><use href="#ic-command"></use></svg><input type="text" id="paletteInput" placeholder="Sök kommando eller fil…" autocomplete="off"><kbd>ESC</kbd></div>
+      <div class="palette-list" id="paletteList"></div>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigera</span><span><kbd>↵</kbd> välj</span><span>Terrarium Command Center 🦎</span></div>
+    </div>
+  </div>
+
+  <!-- QR -->
+  <div class="modal" id="qrModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="qrTitle">
+    <div class="modal-box" style="width:min(400px,100%)">
+      <div class="modal-head"><h2 id="qrTitle">🔗 Dela länk</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body qr-body">
+        <img id="qrImage" alt="QR-kod för filens länk" width="240" height="240">
+        <div class="qr-fallback" id="qrFallback" hidden>QR-tjänsten är inte tillgänglig – kopiera länken nedan.</div>
+        <div class="qr-url" id="qrUrl"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-primary" id="qrCopy">Kopiera länk</button></div>
+    </div>
+  </div>
+
+  <!-- SHORTCUTS -->
+  <div class="modal" id="shortcutsModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head"><h2>⌨️ Kortkommandon</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <div class="shortcut-grid">
+          <div><kbd>Ctrl</kbd> + <kbd>K</kbd><span>Öppna kommandopaletten</span></div>
+          <div><kbd>/</kbd><span>Fokusera sökfältet</span></div>
+          <div><kbd>?</kbd><span>Visa den här listan</span></div>
+          <div><kbd>V</kbd><span>Växla rutnät / lista</span></div>
+          <div><kbd>←</kbd> <kbd>→</kbd><span>Bläddra i förhandsvisning</span></div>
+          <div><kbd>C</kbd><span>Kopiera länk i förhandsvisning</span></div>
+          <div><kbd>Del</kbd><span>Ta bort i förhandsvisning</span></div>
+          <div><kbd>Esc</kbd><span>Stäng dialog / rensa markering</span></div>
+          <div><kbd>Z</kbd><span>Växla zen-läge</span></div>
+          <div><kbd>Ctrl</kbd>+<kbd>V</kbd><span>Klistra in bilder/filer direkt</span></div>
+        </div>
+        <div class="note" style="margin-top:18px"><b>Pro-tips:</b> Klicka på rutan överst på ett filkort för att markera flera filer och göra bulkåtgärder. Dra in en hel mapp i uppladdningsytan för rekursiv uppladdning.</div>
+        <div class="note" style="margin-top:10px"><b>Sökoperatorer:</b> <code>tag:work</code> <code>folder:proj</code> <code>type:image</code> <code>starred</code> <code>size:&gt;1mb</code> – går att kombinera fritt.</div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-primary" data-close-modal>Got it 🦎</button></div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="modal" id="infoModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="infoTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="infoTitle">🌿 Så funkar det</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <ol class="info-list">
+          <li><b>Välj moln</b> i inställningarna – Supabase eller Cloudinary, båda gratis.</li>
+          <li><b>Klistra in nycklarna</b> du får av tjänsten (steg-för-steg i <code>SETUP.md</code>).</li>
+          <li><b>Dra in filer eller mappar</b> på startsidan. Varje fil får en egen länk.</li>
+          <li><b>Förhandsvisa, tagga och dela</b> direkt från filkortet eller kommandopaletten.</li>
+          <li><b>Publicera gratis</b> på Netlify, Vercel eller GitHub Pages – dra bara in <code>site/</code>.</li>
+        </ol>
+        <div class="divider"></div>
+        <p class="subhead">Bra att veta</p>
+        <ul class="info-list">
+          <li>I <b>demo-läget</b> stannar filerna i din webbläsare och länkarna funkar bara hos dig.</li>
+          <li>Filerna ligger hos leverantören, <b>inte</b> hos mig.</li>
+          <li>Anon-nyckeln är publik – sätt gärna en storage-policy eller håll sajten privat.</li>
+          <li>Sajten är en installerbar PWA och funkar offline som skal.</li>
+        </ul>
+      </div>
+      <div class="modal-foot"><button class="btn btn-primary" data-close-modal>Got it 🦎</button></div>
+    </div>
+  </div>
+
+  <!-- CLEANUP -->
+  <div class="modal" id="cleanupModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cleanupTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="cleanupTitle">🧹 Städassistent</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" style="margin-bottom:14px">Förslag baserat på dina filer: dubletter, stora filer, gamla filer och otaggade filer.</p>
+        <div class="timeline" id="cleanupList"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" id="selectAllCleanup">Markera alla förslag</button><button class="btn btn-primary" data-close-modal>Klar 🦎</button></div>
+    </div>
+  </div>
+
+  <!-- TRASH -->
+  <div class="modal" id="trashModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="trashTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="trashTitle">🗑️ Papperskorg</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" style="margin-bottom:14px">Borttagna filer ligger kvar här tills du återställer eller rensar dem permanent.</p>
+        <div class="timeline" id="trashList"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost danger" id="emptyTrash">Rensa allt permanent</button><button class="btn btn-primary" data-close-modal>Klar 🦎</button></div>
+    </div>
+  </div>
+
+  <!-- BULK RENAME -->
+  <div class="modal" id="bulkRenameModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="bulkRenameTitle">
+    <div class="modal-box" style="width:min(460px,100%)">
+      <div class="modal-head"><h2 id="bulkRenameTitle">✏️ Byt namn på flera</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" id="renameTargetText" style="margin-bottom:14px"></p>
+        <div class="field"><label for="bulkPrefix">Prefix</label><input type="text" id="bulkPrefix" placeholder="semester"></div>
+        <label class="check"><input type="checkbox" id="bulkNumber" checked> Lägg till nummer (1, 2, 3…)</label>
+        <div class="hint" style="margin-top:8px">Filändelsen behålls automatiskt.</div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" data-close-modal>Avbryt</button><button class="btn btn-primary" id="applyBulkRename">Använd</button></div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="modal" id="insightsModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="insightsTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="insightsTitle">📊 Insikter</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body"><div id="insightsBody"></div><div id="quotaWrap"></div><div id="heatmapWrap"></div><div id="statusWrap"></div></div>
+      <div class="modal-foot"><button class="btn btn-primary" data-close-modal>Snyggt 🦎</button></div>
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENTS -->
+  <div class="modal" id="achievementsModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="achievementsTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="achievementsTitle">🏆 Utmärkelser</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" style="margin-bottom:16px">Lås upp badges genom att odla ditt terrarium.</p>
+        <div class="badge-grid" id="achievementsList"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-primary" data-close-modal>Fortsätt 🌱</button></div>
+    </div>
+  </div>
+
+  <!-- BULK TAGS -->
+  <div class="modal" id="tagModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="tagTitle">
+    <div class="modal-box" style="width:min(460px,100%)">
+      <div class="modal-head"><h2 id="tagTitle">🏷️ Taggmarkera</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" id="tagTargetText" style="margin-bottom:14px"></p>
+        <div class="field"><label for="bulkTagInput">Taggar (kommaseparerade)</label><input type="text" id="bulkTagInput" placeholder="work, viktigt, 2026"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" data-close-modal>Avbryt</button><button class="btn btn-primary" id="applyBulkTags">Lägg till</button></div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="modal" id="activityModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="activityTitle">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="activityTitle">📜 Aktivitet</h2><button class="icon-btn" data-close-modal aria-label="Stäng"><svg class="ic"><use href="#ic-close"></use></svg></button></div>
+      <div class="modal-body">
+        <p class="sec-desc" style="margin-bottom:16px">Senaste 100 händelserna i ditt terrarium. Lagras lokalt i webbläsaren.</p>
+        <div class="timeline" id="activityList"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost danger" id="clearActivity">Rensa historik</button><button class="btn btn-primary" data-close-modal>Klar 🦎</button></div>
+    </div>
+  </div>
+
+  <button class="zen-exit" id="zenExit" hidden>🌿 Avsluta zen · <kbd>Z</kbd></button>
+
+  <div id="toasts" aria-live="polite"></div>
+</body>
+</html>

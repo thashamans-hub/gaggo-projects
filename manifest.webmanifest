@@ -1,0 +1,31 @@
+{
+  "name": "GaGGos Projects — Din gröna drop",
+  "short_name": "GaGGos Projects",
+  "description": "En lugn, grön plats för alla dina filer. Ladda upp, dela, chill.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070d0a",
+  "theme_color": "#0b1710",
+  "lang": "sv",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/terrarium.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Ladda upp fil", "short_name": "Ladda upp", "url": "./?action=upload" },
+    { "name": "Öppna terrariet", "short_name": "Filer", "url": "./?action=vault" }
+  ]
+}

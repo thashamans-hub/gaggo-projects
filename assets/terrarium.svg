@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" width="420" height="460" fill="none">
+  <defs>
+    <linearGradient id="glass" x1="60" y1="40" x2="360" y2="350" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#bfffd6" stop-opacity=".16"/>
+      <stop offset=".45" stop-color="#7bd6a0" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#0d2a1b" stop-opacity=".35"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="46" y1="340" x2="374" y2="416" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20392a"/>
+      <stop offset="1" stop-color="#0b1710"/>
+    </linearGradient>
+    <linearGradient id="leaf1" x1="0" y1="-72" x2="10" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9bff5a"/>
+      <stop offset="1" stop-color="#1d7c42"/>
+    </linearGradient>
+    <linearGradient id="leaf2" x1="0" y1="-60" x2="10" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c9ff5a"/>
+      <stop offset="1" stop-color="#2a9c55"/>
+    </linearGradient>
+    <linearGradient id="gecko" x1="180" y1="255" x2="280" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8affc1"/>
+      <stop offset=".55" stop-color="#35c46b"/>
+      <stop offset="1" stop-color="#14713d"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(210 235) scale(180 190)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9bff5a" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#9bff5a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+
+  <!-- glow -->
+  <ellipse cx="210" cy="235" rx="180" ry="190" fill="url(#halo)"/>
+  <ellipse cx="210" cy="410" rx="130" ry="14" fill="#9bff5a" opacity=".18" filter="url(#blur)"/>
+
+  <!-- glass dome -->
+  <path d="M56 350C56 152 120 40 210 40s154 112 154 310H56Z" fill="url(#glass)" stroke="#bfffd6" stroke-opacity=".35" stroke-width="2"/>
+  <path d="M80 320C82 158 132 66 206 60" stroke="#eafff2" stroke-opacity=".24" stroke-width="6" stroke-linecap="round" filter="url(#soft)"/>
+  <path d="M330 110c14 30 20 76 20 132" stroke="#eafff2" stroke-opacity=".12" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="210" cy="40" rx="12" ry="5" fill="#bfffd6" fill-opacity=".25"/>
+
+  <!-- soil -->
+  <path d="M58 338c52-18 92-24 152-24s100 6 152 24v18H58v-18Z" fill="#12261a"/>
+  <path d="M58 338c52-18 92-24 152-24s100 6 152 24" stroke="#2f5c3c" stroke-width="2"/>
+
+  <!-- branch -->
+  <path d="M74 322c68-16 128-26 216-20 28 2 42 8 58 16" stroke="#4a3527" stroke-width="7" stroke-linecap="round"/>
+  <path d="M74 322c68-16 128-26 216-20" stroke="#6d5239" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- back leaves -->
+  <g opacity=".85">
+    <g transform="translate(120 328) rotate(-34) scale(1.15)"><path d="M0 0C-22-30-14-70 10-88 26-60 24-22 0 0Z" fill="url(#leaf1)"/><path d="M0 0 9-78" stroke="#0b3d20" stroke-width="2" opacity=".55"/></g>
+    <g transform="translate(300 330) rotate(38) scale(1.05)"><path d="M0 0C-22-30-14-70 10-88 26-60 24-22 0 0Z" fill="url(#leaf2)"/><path d="M0 0 9-78" stroke="#0b3d20" stroke-width="2" opacity=".55"/></g>
+    <g transform="translate(190 326) rotate(-8) scale(.85)"><path d="M0 0C-22-30-14-70 10-88 26-60 24-22 0 0Z" fill="url(#leaf1)"/><path d="M0 0 9-78" stroke="#0b3d20" stroke-width="2" opacity=".55"/></g>
+  </g>
+
+  <!-- gecko -->
+  <g transform="translate(0 -4)">
+    <!-- tail curl -->
+    <path d="M198 292c-30-4-58 8-78-8-16-13-8-34 10-32 13 1 18 12 12 20" stroke="#1c8148" stroke-width="13" stroke-linecap="round"/>
+    <path d="M198 292c-30-4-58 8-78-8" stroke="#8affc1" stroke-opacity=".5" stroke-width="4" stroke-linecap="round"/>
+    <!-- legs -->
+    <path d="M196 296c-6 14-20 18-32 14M232 298c4 14 18 18 30 13M188 276c-10-6-20-4-28 2M244 276c10-8 22-6 30 0" stroke="#1f8b4d" stroke-width="9" stroke-linecap="round"/>
+    <path d="M164 310l-6 5M262 311l7 5M160 278l-7-3M274 276l8-4" stroke="#1f8b4d" stroke-width="4" stroke-linecap="round"/>
+    <!-- body -->
+    <ellipse cx="216" cy="286" rx="45" ry="23" transform="rotate(-8 216 286)" fill="url(#gecko)"/>
+    <ellipse cx="216" cy="294" rx="35" ry="13" transform="rotate(-8 216 294)" fill="#b6ffcf" opacity=".35"/>
+    <!-- head -->
+    <ellipse cx="265" cy="273" rx="22" ry="18" transform="rotate(-12 265 273)" fill="url(#gecko)"/>
+    <path d="M248 284c10 8 24 8 34 1" stroke="#0e5a32" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+    <!-- eye -->
+    <circle cx="271" cy="267" r="5.5" fill="#07150c"/>
+    <circle cx="272.5" cy="265.5" r="1.8" fill="#eafff2"/>
+    <circle cx="271" cy="267" r="9" fill="#9bff5a" opacity=".12" filter="url(#soft)"/>
+    <!-- spots -->
+    <circle cx="204" cy="278" r="3" fill="#0e5a32" opacity=".45"/>
+    <circle cx="220" cy="282" r="2.4" fill="#0e5a32" opacity=".4"/>
+    <circle cx="232" cy="276" r="2" fill="#0e5a32" opacity=".35"/>
+  </g>
+
+  <!-- front leaves -->
+  <g>
+    <g transform="translate(146 344) rotate(-18) scale(.78)"><path d="M0 0C-24-32-14-74 12-92 30-62 26-22 0 0Z" fill="url(#leaf2)"/><path d="M0 0 11-82" stroke="#0b3d20" stroke-width="2" opacity=".5"/></g>
+    <g transform="translate(286 344) rotate(24) scale(.7)"><path d="M0 0C-24-32-14-74 12-92 30-62 26-22 0 0Z" fill="url(#leaf1)"/><path d="M0 0 11-82" stroke="#0b3d20" stroke-width="2" opacity=".5"/></g>
+  </g>
+
+  <!-- spores -->
+  <g fill="#c9ff5a">
+    <circle cx="120" cy="180" r="2.6" opacity=".75"/><circle cx="300" cy="140" r="2" opacity=".6"/>
+    <circle cx="250" cy="98" r="1.8" opacity=".5"/><circle cx="160" cy="112" r="1.5" opacity=".45"/>
+    <circle cx="330" cy="220" r="2.2" opacity=".5"/><circle cx="96" cy="250" r="1.7" opacity=".5"/>
+  </g>
+
+  <!-- pot -->
+  <path d="M46 350h328l-10 48a18 18 0 0 1-18 14H74a18 18 0 0 1-18-14l-10-48Z" fill="url(#pot)" stroke="#3a6a49" stroke-opacity=".5" stroke-width="2"/>
+  <rect x="46" y="340" width="328" height="20" rx="10" fill="#1a3323" stroke="#49795a" stroke-opacity=".45"/>
+  <path d="M78 370c60 10 204 10 264 0" stroke="#9bff5a" stroke-opacity=".14" stroke-width="2"/>
+</svg>

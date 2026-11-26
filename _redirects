@@ -1,0 +1,4 @@
+# Proxy för permanent filuppladdning till Catbox (gratis, inget konto).
+# Browser -> /api/filehost -> Netlify -> catbox.moe (same-origin, ingen CORS).
+/api/filehost  https://catbox.moe/user/api.php  200!
+/api/tmpfiles  https://tmpfiles.org/api/v1/upload  200!

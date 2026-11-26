@@ -1,0 +1,11 @@
+{
+  "name": "gaggo-projects",
+  "version": "15.2.0",
+  "private": true,
+  "description": "GaGGos Projects — grön filhostning, PWA, 420 chill",
+  "scripts": {
+    "start": "node serve.js 8080",
+    "test": "node tests/run.js",
+    "deploy:zip": "powershell -NoProfile -ExecutionPolicy Bypass -File deploy.ps1"
+  }
+}
