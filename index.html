@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="css/styles.css?v=170">
+  <link rel="stylesheet" href="css/styles.css?v=180">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
-  <script src="js/config.js?v=170" defer></script>
-  <script src="js/storage.js?v=170" defer></script>
-  <script src="js/zip.js?v=170" defer></script>
-  <script src="js/zipread.js?v=170" defer></script>
-  <script src="js/app.js?v=170" defer></script>
+  <script src="js/config.js?v=180" defer></script>
+  <script src="js/storage.js?v=180" defer></script>
+  <script src="js/zip.js?v=180" defer></script>
+  <script src="js/zipread.js?v=180" defer></script>
+  <script src="js/app.js?v=180" defer></script>
 </head>
 <body>
 
@@ -120,6 +120,7 @@
     <div class="banner shared-banner" id="sharedBanner" hidden>
       <svg class="ic"><use href="#ic-link"></use></svg>
       <div class="banner-txt"><b>Delad samling.</b> Du tittar på ett galleri som någon delat via en länk. Filer och länkar är desamma – men ändringar sparas inte hos dig.</div>
+      <button class="btn btn-primary" id="saveShared" type="button">Spara i mitt terrarium</button>
       <a class="btn btn-ghost" href="./">Till min egen samling</a>
     </div>
 
@@ -303,7 +304,7 @@
   <footer>
     <div class="wrap foot-in">
       <span>🌿 <b data-brand>GaGGos Projects</b> · by <b data-owner>GaGGo</b> · <span data-tagline>Din gröna drop för allt.</span></span>
-      <span>Gjort för att vara fritt. <a href="#" data-open-modal="infoModal">Hur då?</a> · <a href="#" data-open-modal="shortcutsModal">Kortkommandon</a> · <a href="https://github.com/thashamans-hub/gaggo-projects" target="_blank" rel="noopener">Källkod på GitHub ↗</a></span>
+      <span>Gjort för att vara fritt. <a href="#" data-open-modal="infoModal">Hur då?</a> · <a href="#" data-open-modal="shortcutsModal">Kortkommandon</a> · <a href="https://github.com/thashamans-hub/gaggo-projects" target="_blank" rel="noopener">Källkod på GitHub ↗</a> · <a href="https://github.com/thashamans-hub/gaggo-projects/issues/new" target="_blank" rel="noopener">Rapportera bugg ↗</a></span>
     </div>
   </footer>
 

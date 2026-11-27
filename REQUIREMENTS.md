@@ -38,6 +38,11 @@
 ## Fixar i 15.3
 - GitHub Pages: proxyn används bara på Netlify; TmpFiles-upload retry:ar automatiskt (inga 405-fel i konsolen).
 
+## Nya i 18.0
+- Delad samling kan **sparas** i den egna vaulten med “Spara i mitt terrarium”.
+- Samlingslänken visas även som **QR-kod** i delningsdialogen.
+- Footern har direktlänk till **GitHub Issues** för buggrapporter.
+
 ## Nya i 17.0
 - **Delbara samlingar**: filmetadata packas med gzip + base64url in i URL-hashen (`#c=`). Mottagaren får en read-only vy med samma filer och länkar.
 - Kräver `CompressionStream`/`DecompressionStream` för komprimering; fallback till okomprimerad base64 finns.

@@ -33,7 +33,7 @@ En **statisk, episk filhostnings-sida** byggd i ren HTML/CSS/JS – ingen build,
 | 🎧 Chill | Ambient-ljud, roterande bakgrunder, zen-läge och egna accentfärger |
 | 📱 PWA | Installerbar, offline-shell, service worker |
 | 🐙 GitHub | Live-profil och repo-statistik via GitHub API, direktlänkar till repo och ZIP |
-| 🔗 Dela samling | Komprimerad länk i URL:en – mottagaren ser galleriet utan din webbläsares data |
+| 🔗 Dela samling | Komprimerad länk i URL:en + QR-kod; mottagaren kan spara galleriet i sitt eget terrarium |
 
 ## 🚀 Kom igång
 

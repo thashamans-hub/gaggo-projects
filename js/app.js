@@ -1150,20 +1150,26 @@
     });
   }
 
+  function showQrUrl(url) {
+    if (!url) return;
+    state.qrUrl = url;
+    var label = $('#qrUrl'); if (label) label.textContent = url;
+    var img = $('#qrImage'), fallback = $('#qrFallback');
+    if (img) {
+      img.onerror = function () { img.style.display = 'none'; if (fallback) fallback.hidden = false; };
+      img.onload = function () { img.style.display = ''; if (fallback) fallback.hidden = true; };
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + encodeURIComponent(url);
+    }
+    var title = $('#qrTitle'); if (title) title.textContent = '🔗 Dela länk';
+    openModal('qrModal');
+  }
+
   function openQr(id) {
     var f = findFile(id);
     if (!f) return;
     Store.getAdapter().getUrl(f).then(function (url) {
       if (!url) { toast('Filen har ingen länk', 'err'); return; }
-      state.qrUrl = url;
-      var label = $('#qrUrl'); if (label) label.textContent = url;
-      var img = $('#qrImage'), fallback = $('#qrFallback');
-      if (img) {
-        img.onerror = function () { img.style.display = 'none'; if (fallback) fallback.hidden = false; };
-        img.onload = function () { img.style.display = ''; if (fallback) fallback.hidden = true; };
-        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + encodeURIComponent(url);
-      }
-      openModal('qrModal');
+      showQrUrl(url);
     }).catch(function () { toast('Kunde inte hämta länken', 'err'); });
   }
 
@@ -1384,9 +1390,9 @@
       var link = location.origin + location.pathname + '#c=' + code;
       copyText(link).then(function () {
         toast('Delbar samlingslänk kopierad – ' + files.length + ' filer 🔗');
+      }).catch(function () {}).then(function () {
         Store.logActivity('sharelink', files.length + ' filer');
-      }).catch(function () {
-        prompt('Kopiera denna länk:', link);
+        showQrUrl(link);
       });
     }).catch(function (e) { toast('Kunde inte skapa länk: ' + e.message, 'err'); });
   }
@@ -1401,6 +1407,27 @@
       renderFiles();
       toast(files.length + ' delade filer laddade 🌿');
     }).catch(function (e) { toast('Kunde inte läsa delad samling: ' + e.message, 'err'); });
+  }
+
+  function saveSharedCollection() {
+    if (!state.sharedMode || !state.files.length) return;
+    var metas = state.files.map(function (f) {
+      return {
+        id: (crypto.randomUUID && crypto.randomUUID()) || ('s' + Date.now() + Math.random()),
+        name: f.name, url: f.url, size: f.size, type: f.type,
+        path: f.url, icon: f.icon || '', tags: (f.tags || []).slice(),
+        pinned: !!f.pinned, starred: !!f.starred,
+        createdAt: new Date().toISOString(), shared: false
+      };
+    });
+    Store.importMetadata(JSON.stringify({ files: metas }));
+    history.replaceState(null, '', location.pathname + location.search);
+    document.body.classList.remove('shared-mode');
+    state.sharedMode = false;
+    var banner = $('#sharedBanner'); if (banner) banner.hidden = true;
+    boot(true);
+    toast(metas.length + ' filer sparade i ditt terrarium 🌿');
+    Store.logActivity('import', 'delad samling: ' + metas.length);
   }
 
   function fileBytes(f, url) {
@@ -2369,6 +2396,7 @@
     $('#previewQr') && $('#previewQr').addEventListener('click', function () {
       if (state.previewId) openQr(state.previewId);
     });
+    $('#saveShared') && $('#saveShared').addEventListener('click', saveSharedCollection);
     $('#qrCopy') && $('#qrCopy').addEventListener('click', function () {
       if (!state.qrUrl) return;
       copyText(state.qrUrl).then(function () { toast('Länk kopierad 🔗'); });

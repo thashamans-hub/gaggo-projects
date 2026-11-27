@@ -121,7 +121,15 @@ Alla tre är gratis för statiska sajter. Ingen `npm install` behövs.
 - Projektkorten längst ned redigeras i `js/config.js` under `projects`.
 - Utseende: accentfärg, wallpaper på/av, animationer och standardvy i inställningarna.
 
-## 4. Nytt i 17.0
+## 4. Nytt i 18.0
+
+- **Spara delad samling** – knapp i den delade vyn som lägger över filerna i din egen samling.
+- **QR för samlingslänk** – delningsdialogen visar QR-kod direkt.
+- **Buggrapport** – länk till GitHub Issues i footern.
+
+## 4o. Tidigare versioner
+
+### Nytt i 17.0
 
 - **Dela samling** – bulk-knapp/palettkommando skapar en enda länk där hela filgalleriet är inpackat i URL:en. Öppna länken var som helst – samma filer och länkar visas i en read-only vy.
 
