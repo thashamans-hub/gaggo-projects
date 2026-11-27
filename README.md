@@ -32,7 +32,8 @@ En **statisk, episk filhostnings-sida** byggd i ren HTML/CSS/JS – ingen build,
 | 📊 Insikter | Lagringsdonut, 7-dagarsdiagram, värmekarta, systemstatus, XP och 17 badges |
 | 🎧 Chill | Ambient-ljud, roterande bakgrunder, zen-läge och egna accentfärger |
 | 📱 PWA | Installerbar, offline-shell, service worker |
-| 🐙 GitHub | Live-profil och repo-statistik via GitHub API,Direktlänkar till repo och ZIP |
+| 🐙 GitHub | Live-profil och repo-statistik via GitHub API, direktlänkar till repo och ZIP |
+| 🔗 Dela samling | Komprimerad länk i URL:en – mottagaren ser galleriet utan din webbläsares data |
 
 ## 🚀 Kom igång
 

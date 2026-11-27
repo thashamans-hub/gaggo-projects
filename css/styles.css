@@ -444,6 +444,10 @@ code { font-family:var(--mono); font-size:.82em; color:var(--mint); background:r
 .fallback-banner .ic, .fallback-banner .banner-txt b { color:var(--amber); }
 .upgrade-banner { border-color:rgba(var(--accent-rgb),.28); background:linear-gradient(100deg, rgba(var(--accent-rgb),.09), rgba(var(--accent-rgb),.02)); }
 .upgrade-banner .ic, .upgrade-banner .banner-txt b { color:var(--accent); }
+.shared-banner { border-color:rgba(138,255,193,.3); background:linear-gradient(100deg, rgba(138,255,193,.1), transparent); }
+.shared-banner .ic, .shared-banner .banner-txt b { color:var(--mint); }
+body.shared-mode #upload, body.shared-mode .selection-bar, body.shared-mode .filters { display:none !important; }
+body.shared-mode [data-act=star], body.shared-mode [data-act=pin], body.shared-mode [data-act=delete], body.shared-mode [data-act=renameInline], body.shared-mode [data-act=select] { display:none !important; }
 .connect-test { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:-6px 0 14px; }
 .connect-test .btn { padding:8px 13px; font-size:.78rem; }
 #connectionResult.ok { color:var(--mint); }

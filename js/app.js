@@ -44,6 +44,7 @@
     ambient: null,
     cleanupIds: [],
     qrUrl: '',
+    sharedMode: false,
     contentMatches: null,
     contentToken: 0,
     dragFileId: null
@@ -510,7 +511,7 @@
       wrap.innerHTML = '<div class="empty"><div class="empty-ic">📜</div><h3>Ingen historik ännu</h3><p>Dina åtgärder dyker upp här.</p></div>';
       return;
     }
-    var icos = { upload: 'upload', delete: 'trash', purge: 'trash', restore: 'undo', rename: 'edit', star: 'star', pin: 'pin', tags: 'sparkle', settings: 'settings', import: 'download', zip: 'archive', backup: 'archive', 'restore-backup': 'undo', slideshow: 'image', folder: 'folder', sharepage: 'link', renew: 'undo' };
+    var icos = { upload: 'upload', delete: 'trash', purge: 'trash', restore: 'undo', rename: 'edit', star: 'star', pin: 'pin', tags: 'sparkle', settings: 'settings', import: 'download', zip: 'archive', backup: 'archive', 'restore-backup': 'undo', slideshow: 'image', folder: 'folder', sharepage: 'link', renew: 'undo', sharelink: 'link' };
     wrap.innerHTML = list.map(function (a) {
       var del = a.action === 'delete';
       return '<div class="tl-row"><div class="tl-ic ' + (del ? 'del' : '') + '">' + icon(icos[a.action] || 'activity') + '</div>' +
@@ -1329,6 +1330,79 @@
     Store.logActivity('delete', names);
   }
 
+  function bytesToB64url(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  function b64urlToBytes(str) {
+    str = String(str).replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    var s = atob(str), out = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+    return out;
+  }
+
+  function encodeShare(files) {
+    var payload = { v: 1, f: files.map(function (f) {
+      return { n: f.name, u: f.url, s: f.size, t: f.type, i: f.icon || '', g: f.tags || [], p: !!f.pinned, r: !!f.starred, c: f.createdAt };
+    }) };
+    var data = new TextEncoder().encode(JSON.stringify(payload));
+    if (typeof CompressionStream === 'undefined') return Promise.resolve('p' + bytesToB64url(data));
+    var stream = new Blob([data]).stream().pipeThrough(new CompressionStream('gzip'));
+    return new Response(stream).arrayBuffer().then(function (buf) {
+      return 'g' + bytesToB64url(new Uint8Array(buf));
+    }).catch(function () { return 'p' + bytesToB64url(data); });
+  }
+
+  function decodeShare(hash) {
+    var raw = String(hash || '').replace(/^#c=/, '');
+    if (!raw) return Promise.resolve(null);
+    var kind = raw.charAt(0), bytes = b64urlToBytes(raw.slice(1));
+    function parse(buf) {
+      var obj = JSON.parse(new TextDecoder().decode(new Uint8Array(buf)));
+      if (!obj || !Array.isArray(obj.f)) throw new Error('ogiltig samling');
+      return obj.f.map(function (x, i) {
+        return {
+          id: 'share-' + i, name: x.n || 'fil', url: x.u || '', size: x.s || 0,
+          type: x.t || 'application/octet-stream', icon: x.i || '', tags: x.g || [],
+          pinned: !!x.p, starred: !!x.r, createdAt: x.c || new Date().toISOString(), shared: true
+        };
+      });
+    }
+    if (kind === 'g' && typeof DecompressionStream !== 'undefined') {
+      var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      return new Response(stream).arrayBuffer().then(parse).catch(function () { return parse(bytes.buffer); });
+    }
+    return Promise.resolve(parse(kind === 'g' ? bytes.buffer : bytes.buffer));
+  }
+
+  function createShareLink(files) {
+    if (!files.length) { toast('Inga filer att dela', 'err'); return; }
+    encodeShare(files).then(function (code) {
+      var link = location.origin + location.pathname + '#c=' + code;
+      copyText(link).then(function () {
+        toast('Delbar samlingslänk kopierad – ' + files.length + ' filer 🔗');
+        Store.logActivity('sharelink', files.length + ' filer');
+      }).catch(function () {
+        prompt('Kopiera denna länk:', link);
+      });
+    }).catch(function (e) { toast('Kunde inte skapa länk: ' + e.message, 'err'); });
+  }
+
+  function loadSharedView() {
+    decodeShare(location.hash).then(function (files) {
+      if (!files) return;
+      state.sharedMode = true;
+      state.files = files;
+      document.body.classList.add('shared-mode');
+      var banner = $('#sharedBanner'); if (banner) banner.hidden = false;
+      renderFiles();
+      toast(files.length + ' delade filer laddade 🌿');
+    }).catch(function (e) { toast('Kunde inte läsa delad samling: ' + e.message, 'err'); });
+  }
+
   function fileBytes(f, url) {
     return Store.getFileBlob(f.id).then(function (blob) {
       if (blob) return blob.arrayBuffer();
@@ -1744,6 +1818,7 @@
         uploadFiles([new File([text], name, { type: 'text/plain' })]);
       } },
       { name: 'Öppna städassistenten', icon: 'sparkle', run: function () { renderCleanup(); openModal('cleanupModal'); } },
+      { name: 'Skapa delbar samlingslänk', icon: 'link', run: function () { createShareLink(state.selected.size ? selectedFiles() : state.files); } },
       { name: 'Förnya alla länkar', icon: 'undo', run: function () { state.selected.clear(); state.files.forEach(function (f) { state.selected.add(f.id); }); renewSelected(); } },
       { name: 'Växla ambient-ljud', icon: 'music', run: function () { toggleAmbient(); } },
       { name: 'Skapa delningssida (HTML)', icon: 'link', run: function () {
@@ -1947,6 +2022,11 @@
     var ab = $('#ambientBtn'); if (ab) ab.classList.toggle('active', !!state.ambient);
     if (!state.autoRenewStarted) { state.autoRenewStarted = true; startAutoRenew(); }
     var dot = $('#activityDot'); if (dot) dot.hidden = Store.getActivity().length === 0;
+    if (/^#c=/.test(location.hash)) {
+      state.ready = true;
+      loadSharedView();
+      return;
+    }
     adapter.init().then(function () { return adapter.list(); }).then(function (list) {
       var trashed = new Set(Store.getTrash().map(function (t) { return t.id; }));
       state.files = (Array.isArray(list) ? list : []).filter(function (f) { return !trashed.has(f.id); });
@@ -2194,6 +2274,7 @@
         }).then(function () { toast('Markdown-lista kopierad 📝'); });
       }
       if (a === 'renew') { renewSelected(); return; }
+      if (a === 'share') { createShareLink(files.length ? files : state.files); return; }
       if (a === 'star') {
         files.forEach(function (f) { f.starred = true; Store.updateMeta(f); });
         renderFiles(); toast(files.length + ' stjärnmärkta ★');

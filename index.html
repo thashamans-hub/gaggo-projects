@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="css/styles.css?v=161">
+  <link rel="stylesheet" href="css/styles.css?v=170">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
-  <script src="js/config.js?v=161" defer></script>
-  <script src="js/storage.js?v=161" defer></script>
-  <script src="js/zip.js?v=161" defer></script>
-  <script src="js/zipread.js?v=161" defer></script>
-  <script src="js/app.js?v=161" defer></script>
+  <script src="js/config.js?v=170" defer></script>
+  <script src="js/storage.js?v=170" defer></script>
+  <script src="js/zip.js?v=170" defer></script>
+  <script src="js/zipread.js?v=170" defer></script>
+  <script src="js/app.js?v=170" defer></script>
 </head>
 <body>
 
@@ -116,6 +116,12 @@
         <div class="orbit-badge"><b>0 kr / mån</b> whole lotta chill</div>
       </div>
     </header>
+
+    <div class="banner shared-banner" id="sharedBanner" hidden>
+      <svg class="ic"><use href="#ic-link"></use></svg>
+      <div class="banner-txt"><b>Delad samling.</b> Du tittar på ett galleri som någon delat via en länk. Filer och länkar är desamma – men ändringar sparas inte hos dig.</div>
+      <a class="btn btn-ghost" href="./">Till min egen samling</a>
+    </div>
 
     <div class="banner upgrade-banner" id="upgradeBanner" hidden>
       <svg class="ic"><use href="#ic-cloud"></use></svg>
@@ -240,6 +246,7 @@
           <button data-bulk="copy"><svg class="ic"><use href="#ic-link"></use></svg> Länkar</button>
           <button data-bulk="markdown"><svg class="ic"><use href="#ic-file"></use></svg> Markdown</button>
           <button data-bulk="renew"><svg class="ic"><use href="#ic-undo"></use></svg> Förnya länkar</button>
+          <button data-bulk="share"><svg class="ic"><use href="#ic-link"></use></svg> Dela samling</button>
           <button data-bulk="star"><svg class="ic"><use href="#ic-star"></use></svg> Stjärnmärk</button>
           <button data-bulk="pin"><svg class="ic"><use href="#ic-pin"></use></svg> Fäst</button>
           <button data-bulk="tags"><svg class="ic"><use href="#ic-sparkle"></use></svg> Taggar</button>

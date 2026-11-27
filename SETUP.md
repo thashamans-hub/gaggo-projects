@@ -121,7 +121,13 @@ Alla tre är gratis för statiska sajter. Ingen `npm install` behövs.
 - Projektkorten längst ned redigeras i `js/config.js` under `projects`.
 - Utseende: accentfärg, wallpaper på/av, animationer och standardvy i inställningarna.
 
-## 4. Nytt i 16.0
+## 4. Nytt i 17.0
+
+- **Dela samling** – bulk-knapp/palettkommando skapar en enda länk där hela filgalleriet är inpackat i URL:en. Öppna länken var som helst – samma filer och länkar visas i en read-only vy.
+
+## 4n. Tidigare versioner
+
+### Nytt i 16.0
 
 - **GitHub-sektion**: profil, repo-statistik och direktlänkar via GitHubs publika API.
 - **Projektkort**: lokala sökvägar lokalt, GitHub-länkar i publicerad miljö.

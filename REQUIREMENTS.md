@@ -38,6 +38,10 @@
 ## Fixar i 15.3
 - GitHub Pages: proxyn används bara på Netlify; TmpFiles-upload retry:ar automatiskt (inga 405-fel i konsolen).
 
+## Nya i 17.0
+- **Delbara samlingar**: filmetadata packas med gzip + base64url in i URL-hashen (`#c=`). Mottagaren får en read-only vy med samma filer och länkar.
+- Kräver `CompressionStream`/`DecompressionStream` för komprimering; fallback till okomprimerad base64 finns.
+
 ## Nya i 16.0
 - GitHub-integrationssektion med profil och repo-statistik via `api.github.com` (CORS tillåts). Fallback med länkar om nätverket saknas.
 - Projektkort använder lokala sökvägar vid lokal körning och GitHub-länkar i deployad miljö.
